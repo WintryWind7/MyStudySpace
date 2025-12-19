@@ -1,0 +1,31 @@
+package mqx.dao;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.*;
+
+import java.util.Properties;
+
+public class DbHelperByMySQL {
+	//定义相关属性，只要一份，所以可以定义为静态的
+     private static String username,password,url,driverClassName;
+     //在静态代码块中初始化
+     static {
+    	 Properties properties=new Properties();
+    	 try {
+    		 properties.load(new FileInputStream("src\\jdbc.config"));
+    		 username=properties.getProperty("username");
+        	 password=properties.getProperty("password");
+        	 url=properties.getProperty("url");
+        	 driverClassName=properties.getProperty("driverClassName");
+             Class.forName(driverClassName);
+			 
+		} catch (Exception e) {
+			
+			throw new RuntimeException();
+		}
+    	
+     }
+    
+}
+

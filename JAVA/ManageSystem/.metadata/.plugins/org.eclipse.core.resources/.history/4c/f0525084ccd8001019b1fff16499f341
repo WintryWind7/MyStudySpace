@@ -1,0 +1,57 @@
+package mqx.view;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import mqx.dao.StudentDAO;
+import mqx.pojo.Student;
+
+
+
+public class StuMenuLogin {
+   StudentDAO studentDAO=new StudentDAO();
+   Student student=null;
+   ArrayList<Student> students=new ArrayList<Student>();
+	private char key = ' ';
+	Scanner input = new Scanner(System.in);
+    public void mainMenu() {
+    	while(true) {
+    		System.out.println("学生管理信息系统");
+    		System.out.println("\t 1  登录");
+    		System.out.println("\t 2 退出");
+    		System.out.print("请输入（1-2）:");
+    		Scanner input=new Scanner(System.in);
+    		key=input.next().charAt(0);
+    		switch (key) {
+			case '1':
+				System.out.print("请输入学号：");
+				String stuID=input.next();
+				student=studentDAO.getStudentByID(stuID);
+				if(students.isEmpty()) {
+					System.out.println("你输入的学号不存在！");
+					break;
+				}
+				System.out.print("请输入密码：");
+				String stupwd=input.next();
+				if(!(student.getStuPwd().trim()).equals(stupwd))
+				{
+					System.out.println("你输入的密码不正确！");
+					break;
+				}
+				new StudentSysView();
+				break;
+			case '2':
+				System.out.println("你已经退出");
+				System.exit(0);
+				break;
+			default:
+				System.out.println("输入错误");
+				
+				break;
+			}
+    	}
+    }
+	
+}

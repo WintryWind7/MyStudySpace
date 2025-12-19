@@ -1,0 +1,45 @@
+/**
+ * 
+ */
+package jdbcByMysql;
+
+/**
+ * @author mqx
+ *
+ */
+public class Student {
+   private String stuID,stuName;
+
+public String getStuID() {
+	return stuID;
+}
+
+public void setStuID(String stuID) {
+	this.stuID = stuID;
+}
+
+public String getStuName() {
+	return stuName;
+}
+
+public void setStuName(String stuName) {
+	this.stuName = stuName;
+}
+
+public Student() {
+	super();
+	// TODO Auto-generated constructor stub
+}
+
+public Student(String stuID, String stuName) {
+	super();
+	this.stuID = stuID;
+	this.stuName = stuName;
+}
+
+@Override
+public String toString() {
+	return "Student [stuID=" + stuID + ", stuName=" + stuName + "]";
+}
+   
+}

@@ -1,0 +1,69 @@
+package mqx.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
+
+import mqx.pojo.Student;
+
+
+public class StudentDAO  {
+	
+	
+	
+	// 添加学生
+	public int  insertStudent(Student stu) {
+		Connection conn=DbHelperByMySQL.getConnection();
+		String sql="insert into studentinfo(stuid,stuName,stuPwd)values(?,?,?)";
+		PreparedStatement pst=null;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1,"1010");
+			pst.setString(2, "zs");
+			pst.setString(3, "000");
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+		    DbHelperByMySQL.close(null, pst, conn);
+		}
+		
+		return  dbHelper.update(sql, stu.getStuID(), stu.getStuName(),stu.getStuPwd());
+	
+	}
+	//删除信息
+		public  int   deleteStudent(String stuID) {
+			String sql="delete from studentinfo  where stuid=?";
+			return dbHelper.update(sql,stuID);
+		  
+		}
+	//修改信息
+	public  int   updateStudent(Student stu) {
+		String sql="update studentinfo set stuname=? , stupwd=? where stuid=?";
+		return dbHelper.update(sql,stu.getStuName(),stu.getStuPwd(),stu.getStuID());
+	}
+	//查找
+	public ArrayList<Student> getAllStudent() {
+		String sql="select * from studentinfo";
+		return (ArrayList<Student>) dbHelper.queryList(sql, Student.class);
+	}
+	public ArrayList<Student> getAllStudent(String stuID) {
+		String sql="select * from studentinfo where stuid=?";
+		return (ArrayList<Student>) dbHelper.queryList(sql, Student.class,stuID);
+	}
+	
+	//根据学号查找
+	public Student getStudentByID(String stuID) {
+		String sql="select * from studentinfo where stuid=?";
+		ArrayList<Student>  stulist=(ArrayList<Student>) dbHelper.queryList(sql, Student.class, stuID);
+		System.out.println(stulist.size());
+		if(stulist.size()>0)
+			return stulist.get(0);
+		return null;
+		
+
+	}
+}

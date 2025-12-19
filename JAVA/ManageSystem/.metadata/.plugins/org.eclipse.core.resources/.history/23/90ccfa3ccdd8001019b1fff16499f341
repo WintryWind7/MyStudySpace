@@ -1,0 +1,121 @@
+package mqx.view;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import mqx.dao.StudentDAO;
+import mqx.pojo.Student;
+
+
+
+public class StudentSysView {
+	public  StudentSysView() {
+		char key,confirm;
+	    StudentDAO studentDAO=new StudentDAO();
+		ArrayList<Student> students=new ArrayList<Student>();
+		Student student=null;
+		String stuID=null;
+		String stuName=null;
+		String stuPwd=null;
+		Scanner input = new Scanner(System.in);
+		while (true) {
+			menu();
+			 key = input.next().charAt(0);
+			switch (key) {
+					case '1':
+						System.out.println("----显示学生信息----");
+						students=studentDAO.getAllStudent();
+						System.out.println(students);
+						break;
+					case '2':
+						System.out.println("----添加学生信息----");
+						System.out.print("请输入学号：");
+						stuID=input.next();
+						student=studentDAO.getStudentByID(stuID);
+						if(student!=null) {
+							System.out.println("你输入的学号已经存在！");
+							break;
+						}
+						System.out.print("请输入姓名：");
+						stuName=input.next();
+						System.out.print("请输入密码：");
+						stuPwd=input.next();
+						student =new Student(stuID, stuName,stuPwd);
+						System.out.println(studentDAO.insertStudent(student));
+						break;
+					case '3':
+						System.out.println("----查找学生信息----");
+						System.out.print("请输入学号：");
+						stuID=input.next();
+						student=studentDAO.getStudentByID(stuID);
+						if(student!=null) {
+							System.out.println(students);
+							
+						}
+						else {
+							System.out.println("没有找到学号为"+stuID+"的信息");
+						}
+						break;
+					case '4':
+						System.out.println("----删除学生信息----");
+						System.out.print("请输入要删除的学号：");
+						stuID=input.next();
+						student=studentDAO.getStudentByID(stuID);
+						if(student!=null) {
+							
+							System.out.println("学号为"+stuID+"的学生信息已删除");
+						}
+						else {
+							System.out.println("没有找到学号为"+stuID+"的信息");
+						}
+						
+						break;
+					case '5':
+						System.out.println("----修改学生信息----");
+						System.out.print("请输入要修改的学号：");
+						stuID=input.next();
+						student=studentDAO.getStudentByID(stuID);
+						if(student==null) {
+							System.out.println("你输入的学号不存在！");
+							break;
+						}
+						System.out.print("请输入姓名：");
+						stuName=input.next();
+						System.out.print("请输入密码：");
+						stuPwd=input.next();
+						student =new Student(stuID, stuName,stuPwd);
+						System.out.println(studentDAO.updateStudent(student));
+						break;
+					case '6':
+						System.out.println("----学生管理信息系统1.0---");
+						System.out.println("作者：***");
+						System.out.println("完成时间：2025年12月");
+						break;
+					
+
+			case '0':
+				System.out.print("\t确定要退出吗？（y/n）");
+				confirm = input.next().charAt(0);
+				if ('Y'==confirm || 'y'==confirm) {
+					System.out.println("\t程序已经退出~~~~~~");
+					System.exit(0);
+				}
+				break;
+			default:
+				System.out.println("输入错误");
+				break;
+			}
+		}
+	}
+	public static void menu() {
+		System.out.println("=========学生管理信息系统V1.0=========");
+		System.out.println("\t1、显示");
+		System.out.println("\t2、添加");
+		System.out.println("\t3、查找");
+		System.out.println("\t4、删除");
+		System.out.println("\t5、修改");
+		System.out.println("\t6、帮助");
+		System.out.println("\t0、退出");
+		System.out.print("\t请选择（0-6）：");
+	}
+    
+}

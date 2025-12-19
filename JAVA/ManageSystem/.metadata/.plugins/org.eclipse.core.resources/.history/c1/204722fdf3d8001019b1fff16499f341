@@ -1,0 +1,48 @@
+package mqx.pojo;
+
+public class Student {
+	private String stuID, stuName,stuPwd;
+
+	public String getStuID() {
+		return stuID;
+	}
+
+	public void setStuID(String stuID) {
+		this.stuID = stuID;
+	}
+
+	public String getStuName() {
+		return stuName;
+	}
+
+	public void setStuName(String stuName) {
+		this.stuName = stuName;
+	}
+
+	public String getStuPwd() {
+		return stuPwd;
+	}
+
+	public void setStuPwd(String stuPwd) {
+		this.stuPwd = stuPwd;
+	}
+
+	public Student() {
+		super();
+	}
+
+	public Student(String stuID, String stuName, String stuPwd) {
+		super();
+		this.stuID = stuID;
+		this.stuName = stuName;
+		this.stuPwd = stuPwd;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [stuID=" + stuID + ", stuName=" + stuName + ", stuPwd=" + stuPwd + "]";
+	}
+	
+
+	
+}

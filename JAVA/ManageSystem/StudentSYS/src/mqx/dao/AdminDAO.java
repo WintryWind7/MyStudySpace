@@ -1,0 +1,64 @@
+package mqx.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import mqx.pojo.Admin;
+
+public class AdminDAO {
+	Connection conn =null;
+	PreparedStatement pst = null;
+	ResultSet rs = null;
+
+	// 注册管理员
+	public int insertAdmin(Admin admin) {
+        conn=DbHelperByMySQL.getConnection();
+		String sql = "insert into adminInfo(adminid,adminName,adminPWD)values(?,?,?)";
+
+		int i = 0;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, admin.getAdminID());
+			pst.setString(2, admin.getAdminName());
+			pst.setString(3, admin.getAdminPWD());
+			i = pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+
+		return i;
+
+	}
+
+	
+	
+	// 根据账号查找
+	public Admin getAdminByID(String parAdminID) {
+		 conn=DbHelperByMySQL.getConnection();
+		String sql = "select * from adminInfo where adminID=?";
+		Admin  admin = null;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, parAdminID);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String adminID = rs.getString("adminID");
+				String adminName = rs.getString("adminName");
+				String adminPWD=rs.getString("adminPWD");
+				admin = new Admin(adminID, adminName,adminPWD);
+			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+		return admin;
+
+	}
+}

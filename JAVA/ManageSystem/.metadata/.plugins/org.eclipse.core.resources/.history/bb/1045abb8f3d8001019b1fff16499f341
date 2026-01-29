@@ -1,0 +1,5 @@
+package mqx.dao;
+
+public class AdminDAO {
+
+}

@@ -1,0 +1,84 @@
+/**
+ * 
+ */
+package jdbcByMysql;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.*;
+
+import java.util.Properties;
+
+/**
+ * @author mqx
+ *
+ */
+public class DbHelperByMySQL {
+	//定义相关属性，只要一份，所以可以定义为静态的
+     private static String username,password,url,driverClassName;
+     //在静态代码块中初始化
+     static {
+    	 Properties properties=new Properties();
+    	 try {
+    		 properties.load(new FileInputStream("src\\jdbc.config"));
+    		 username=properties.getProperty("username");
+        	 password=properties.getProperty("password");
+        	 url=properties.getProperty("url");
+        	 driverClassName=properties.getProperty("driverClassName");
+             Class.forName(driverClassName);
+			 
+		} catch (Exception e) {
+			//转成运行异常，调用者可以捕获异常，也可以选择默认处理
+			//throw new RuntimeException();
+			e.printStackTrace();
+		}
+    	
+     }
+     //获取连接，返回Connection
+     public static  Connection getConnection() {
+    	 Connection conn=null;
+	   try {
+		conn=  DriverManager.getConnection(url, username, password);
+	} catch (SQLException e) {
+		throw new RuntimeException(e);
+	}
+	   return conn;
+	}
+     //关闭资源
+     public static void close(ResultSet rs, Statement st, Connection conn) {
+ 		try {
+ 			if (rs != null)
+ 				rs.close();
+ 			if (st != null)
+ 				st.close();
+ 			if (conn != null) 
+ 				conn.close();
+ 		} catch (SQLException e) {
+ 			throw new RuntimeException(e);
+ 		}
+ 	}
+    //执行增删改
+  		public int update(String sql, Object... pars) {
+            int rows=0;
+  			Connection conn = null;
+  			PreparedStatement pst=null;
+  			try {
+  				conn = getConnection();
+  				pst=conn.prepareStatement(sql);
+  				for (int i = 0; i < pars.length; i++) {
+  					pst.setObject(i+1,pars[i]);
+  				}	
+  				
+  				rows=pst.executeUpdate();
+  			} catch (SQLException e) {
+  				e.printStackTrace();
+  			}
+  			finally {
+  				close(null, pst, conn);
+  			}
+  			return  rows;
+  			
+  		}
+
+}
+

@@ -1,0 +1,92 @@
+package mqx.view;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import mqx.dao.AdminDAO;
+import mqx.pojo.Admin;
+
+public class EmpMenuLogin {
+   AdminDAO adminDAO = new AdminDAO();
+   Admin admin = null;
+   private char key = ' ';
+   Scanner input = new Scanner(System.in);
+   String adminID = null;
+   String adminName = null;
+   String adminPWD = null;
+   
+   public EmpMenuLogin() {
+       while(true) {
+           System.out.println("====员工管理信息系统====");
+           System.out.println(" 1 登录");
+           System.out.println(" 2 注册");
+           System.out.println(" 0 退出");
+           System.out.print("请输入（0-2）:");
+           Scanner input = new Scanner(System.in);
+           key = input.next().charAt(0);
+           switch (key) {
+               case '1':
+                   System.out.println("=======管理员登录=======");
+                   while (true) {
+                       System.out.print("请输入账号：");
+                       adminID = input.next();
+                       admin = adminDAO.getAdminByID(adminID);
+                       if (admin != null) {
+                           break;
+                       }
+                       System.out.println("你输入的账号不存在！");
+                   }
+                   
+                   while (true) {
+                       System.out.print("请输入密码：");
+                       adminPWD = input.next();
+                       if (admin.getAdminPWD().trim().equals(adminPWD)) {
+                           break;
+                       }
+                       System.out.println("你输入的密码不正确！");
+                   }
+                   new EmployeeSysView();
+                   break;
+               case '2':
+                   System.out.println("=====管理员注册======");
+                   while(true) {
+                       System.out.print("请输入账号：");
+                       adminID = input.next();
+                       if(adminDAO.getAdminByID(adminID) == null) {
+                           break;
+                       } else {
+                           System.out.println("账号已经存在，请重新输入");
+                       }
+                   }
+                   System.out.print("请输入姓名：");
+                   adminName = input.next();
+                   
+                   while(true) {
+                       System.out.print("请输入密码：");
+                       adminPWD = input.next();
+                       System.out.print("请输入确认密码：");
+                       String confirmAdminPWD = input.next();
+                       if(adminPWD.equals(confirmAdminPWD)) {
+                           break;
+                       }
+                       System.out.println("两次密码不一致，请重新输入");
+                   }
+                   admin = new Admin(adminID, adminName, adminPWD);
+                   if(adminDAO.insertAdmin(admin) > 0) {
+                       System.out.println("管理员信息注册成功");
+                   } else {
+                       System.out.println("管理员信息注册失败");
+                   }
+                   break;
+               case '0':
+                   System.out.println("你已经退出");
+                   System.exit(0);
+                   break;
+               default:
+                   System.out.println("输入错误");
+                   break;
+           }
+       }
+   }
+}

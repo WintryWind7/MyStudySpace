@@ -1,0 +1,129 @@
+package mqx.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import mqx.pojo.Student;
+
+public class StudentDAO {
+
+	Connection conn =null;
+	PreparedStatement pst = null;
+	ResultSet rs = null;
+
+	// 添加学生
+	public int insertStudent(Student stu) {
+        conn=DbHelperByMySQL.getConnection();
+		String sql = "insert into studentinfo(stuid,stuName,stuPwd)values(?,?,?)";
+
+		int i = 0;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, stu.getStuID());
+			pst.setString(2, stu.getStuName());
+			pst.setString(3, stu.getStuPwd());
+			i = pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+
+		return i;
+
+	}
+
+	// 删除信息
+	public int deleteStudent(String stuID) {
+		 conn=DbHelperByMySQL.getConnection();
+		String sql = "delete from studentinfo  where stuid=?";
+		int i = 0;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, stuID);
+			i = pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+
+		return i;
+
+	}
+
+	// 修改信息
+	public int updateStudent(Student stu) {
+		 conn=DbHelperByMySQL.getConnection();
+		String sql = "update studentinfo set stuname=? , stupwd=? where stuid=?";
+		int i = 0;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, stu.getStuName());
+			pst.setString(2, stu.getStuPwd());
+			pst.setString(3, stu.getStuID());
+			i = pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+
+		return i;
+	}
+
+	// 查找
+	public ArrayList<Student> getAllStudent() {
+		 conn=DbHelperByMySQL.getConnection();
+		String sql = "select * from studentinfo";
+		ArrayList<Student> students = new ArrayList<Student>();
+		try {
+			pst = conn.prepareStatement(sql);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String stuID = rs.getString("stuID");
+				String stuName = rs.getString("stuName");
+				String stuPwd=rs.getString("stuPWD");
+				Student stu = new Student(stuID, stuName,stuPwd);
+				students.add(stu);
+			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+		return students;
+	}
+
+	
+	// 根据学号查找
+	public Student getStudentByID(String parStuID) {
+		 conn=DbHelperByMySQL.getConnection();
+		String sql = "select * from studentinfo where stuid=?";
+		Student  student = null;
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, parStuID);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String stuID = rs.getString("stuID");
+				String stuName = rs.getString("stuName");
+				String stuPwd=rs.getString("stuPWD");
+				student = new Student(stuID, stuName,stuPwd);
+			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}finally {
+			DbHelperByMySQL.close(null, pst, conn);
+		}
+		return student;
+
+	}
+}

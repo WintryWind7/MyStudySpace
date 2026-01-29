@@ -2,7 +2,7 @@ package homework11.no1;
 
 public class Test {
     public static void main(String[] args) {
-        Ticket ticketSeller = new Ticket();
+        Window ticketSeller = new Window();
 
         Thread eastWindow = new Thread(ticketSeller, "窗口东");
         Thread northWindow = new Thread(ticketSeller, "窗口北");

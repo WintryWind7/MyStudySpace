@@ -1,0 +1,124 @@
+(一)建库、建表及表结构维护
+1.使用SQL语句创建数据库studentsdb。
+CREATE DATABASE studentsdb;
+2.使用SQL语句选择studentsdb为当前使用数据库。
+USE studentsdb;
+3.使用SQL语句在studentsdb数据库创建数据表student_info、curriculum、grade，三个表的数据结构如表1-表3所示。
+CREATE TABLE student_info (
+    SNO CHAR(4) NOT NULL PRIMARY KEY COMMENT '学号',
+    SNAME CHAR(8) NOT NULL COMMENT '姓名',
+    SEX CHAR(2) COMMENT '性别',
+    BIRTH DATE COMMENT '出生日期',
+    ADDRESS VARCHAR(50) COMMENT '家庭住址'
+);
+CREATE TABLE curriculum (
+    KCH CHAR(4) NOT NULL PRIMARY KEY COMMENT '课程编号',
+    KCM VARCHAR(50) COMMENT '课程名称',
+    CREDIT INT COMMENT '学分'
+);
+CREATE TABLE grade (
+    SNO CHAR(4) NOT NULL COMMENT '学号',
+    KCH CHAR(4) NOT NULL COMMENT '课程编号',
+    SCORE INT COMMENT '分数',
+    PRIMARY KEY (SNO, KCH)
+);
+4.使用SQL语句ALTER TABLE修改curriculum表的"KCM"列，使之名称改为"KCMC"。
+ALTER TABLE curriculum CHANGE KCM KCMC VARCHAR(50);
+5.使用SQL语句ALTER TABLE修改grade表的"SCORE"列，使其数据类型为decimal(5,2)。
+ALTER TABLE grade MODIFY SCORE DECIMAL(5,2);
+6.使用SQL语句ALTER TABLE为student_info表添加一个名为"Remark"的数据列，其数据类型为varchar(50)。
+ALTER TABLE student_info ADD Remark VARCHAR(50);
+7.使用SQL语句创建数据库studb，并在此数据库下创建表stu1，表结构与数据与studentsdb的student_info表相同。
+CREATE DATABASE studb;
+CREATE TABLE studb.stu1 LIKE studentsdb.student_info;
+8.删除表stu1的"备注"列。
+ALTER TABLE studb.stu1 DROP COLUMN Remark;
+9.删除表stu1。
+DROP TABLE studb.stu1;
+10.删除数据库studb。
+DROP DATABASE studb;
+(二)表数据操作
+使用SQL语句INSERT向studentsdb数据库的student_info、curriculum、grade表插入数据，各表数据如表4-表6所示。
+INSERT INTO student_info (SNO, SNAME, SEX, BIRTH, ADDRESS) VALUES
+('0001', '张青平', '男', '2000-10-01', '衡阳市东风路77号'),
+('0002', '刘东阳', '男', '1998-12-09', '东阳市八一北路33号'),
+('0003', '马晓夏', '女', '1995-05-12', '长岭市五一路763号'),
+('0004', '钱忠理', '男', '1994-09-23', '滨海市洞庭大道279号'),
+('0005', '孙海洋', '男', '1995-04-03', '长岛市解放路27号'),
+('0006', '郭小斌', '男', '1997-11-10', '南山市红旗路113号'),
+('0007', '肖月玲', '女', '1996-12-07', '东方市南京路11号'),
+('0008', '张玲珑', '女', '1997-12-24', '滨江市新建路97号');
+INSERT INTO curriculum (KCH, KCM, CREDIT) VALUES
+('0001', '计算机应用基础', 2),
+('0002', 'C语言程序设计', 2),
+('0003', '数据库原理及应用', 2),
+('0004', '英语', 4),
+('0005', '高等数学', 4);
+INSERT INTO grade (SNO, KCH, SCORE) VALUES
+('0001', '0001', 80), ('0001', '0002', 91), ('0001', '0003', 88), ('0001', '0004', 85), ('0001', '0005', 77),
+('0002', '0001', 73), ('0002', '0002', 68), ('0002', '0003', 80), ('0002', '0004', 79), ('0002', '0005', 73),
+('0003', '0001', 84), ('0003', '0002', 92), ('0003', '0003', 81), ('0003', '0004', 82), ('0003', '0005', 75);
+使用SQL语句删除表student_info中学号为0008的记录。
+DELETE FROM student_info WHERE SNO = '0008';
+使用SQL语句删除表grade中所有"计算机应用基础"的选课信息。（注意：使用子查询）
+DELETE FROM grade WHERE KCH = (SELECT KCH FROM curriculum WHERE KCM = '计算机应用基础');
+使用SQL语句更新表student_info中学号为0002的家庭住址为"滨江市新建路196号"。
+UPDATE student_info SET ADDRESS = '滨江市新建路196号' WHERE SNO = '0002';
+使用SQL语句更新表grade中"数据库原理与应用"课程的成绩score为0（注意：使用子查询）。
+UPDATE grade SET SCORE = 0 WHERE KCH = (SELECT KCH FROM curriculum WHERE KCM = '数据库原理及应用');
+(三)建表同时实现完整性约束
+1.创建students数据库，在该数据库下创建表stu，并同时创建约束，表结构及约束要求如表1所示。
+CREATE DATABASE students;
+USE students;
+CREATE TABLE stu (
+    SNO CHAR(4) NOT NULL PRIMARY KEY,
+    SNAME CHAR(8),
+    SEX CHAR(2),
+    BIRTH DATE
+);
+2.创建表sc，并同时创建约束，表结构及约束要求如表2所示。
+CREATE TABLE sc (
+    SNO CHAR(4) NOT NULL,
+    KCH CHAR(4) NOT NULL,
+    SCORE DECIMAL(5,2),
+    PRIMARY KEY (SNO, KCH),
+    CONSTRAINT fk_sno FOREIGN KEY (SNO) REFERENCES stu(SNO),
+    CHECK (SCORE >= 0 AND SCORE <= 100)
+);
+3.创建表course，并同时创建约束，表结构及约束要求如表3所示。
+CREATE TABLE course (
+    KCH CHAR(4) NOT NULL,
+    KCM CHAR(20),
+    CREDIT INT,
+    CONSTRAINT uq_cname UNIQUE (KCM)
+);
+4.在course表的课号列建立主键约束。
+ALTER TABLE course ADD PRIMARY KEY (KCH);
+5.在sc表的课号列建立外键约束fk_cno，参照course表的课号列的取值，要求实现级联更新。
+ALTER TABLE sc ADD CONSTRAINT fk_cno FOREIGN KEY (KCH) REFERENCES course(KCH) ON UPDATE CASCADE;
+6.在stu表的姓名列建立唯一约束名uq_sname。
+ALTER TABLE stu ADD CONSTRAINT uq_sname UNIQUE (SNAME);
+7.在course表的学分列建立检查约束ck_xf，检查条件为学分>0。
+ALTER TABLE course ADD CONSTRAINT ck_xf CHECK (CREDIT > 0);
+8.删除sc表的外键约束fk_cno，fk_sno。
+ALTER TABLE sc DROP FOREIGN KEY fk_cno;
+ALTER TABLE sc DROP FOREIGN KEY fk_sno;
+9.删除stu表的主键约束。
+ALTER TABLE stu DROP PRIMARY KEY;
+10.删除course表的唯一约束uq_cname。
+ALTER TABLE course DROP INDEX uq_cname;
+(四)实验思考
+1.能通过一个CREATE DATABASE语句创建两个及以上的数据库吗？
+不能。CREATE DATABASE语句每次只能创建一个数据库，如果要创建多个数据库，需要分别执行多条CREATE DATABASE语句。
+2.删除了的数据库还有可能恢复吗？
+有可能恢复。如果之前对数据库进行了备份，可以通过备份文件恢复数据库。如果没有备份，则需要借助专业数据恢复工具尝试恢复，但成功率取决于数据是否被覆盖等因素。
+3.对于studentsdb数据库的student_info表而言，如果输入相同学号的记录将出现什么现象？为什么？
+会出现错误提示，插入失败。因为student_info表的SNO列设置了主键约束（PRIMARY KEY），主键要求列值唯一且不为空，所以不能插入重复的学号。
+4.已经打开的表能删除吗？
+可以删除。在MySQL中，即使表正在被使用，DROP TABLE语句仍然可以执行并删除该表。但需要注意，删除后所有依赖于该表的查询、视图等都会失效。
+5.请说明唯一约束和主键约束之间的联系和区别。
+联系：两者都要求列值唯一，不允许重复值。区别：（1）主键约束不允许NULL值，唯一约束允许NULL值；（2）一个表只能有一个主键约束，但可以有多个唯一约束；（3）主键自动创建索引，且可作为其他表外键参照的目标；（4）主键标识表中唯一记录，具有更强的语义。
+6.在course表中插入一条学分值小于0的记录，该记录能插入成功吗？
+不能插入成功。因为course表的CREDIT列设置了检查约束ck_xf，约束条件为CREDIT>0，当插入的学分值小于0时，违反检查约束，MySQL会拒绝该插入操作并报错。
+7.建立外键约束所参照的父表的列必须建立成主键吗？
+不一定。在MySQL中，外键约束参照的父表列可以是主键，也可以是具有唯一约束（UNIQUE）的列。只要该列满足唯一性要求，就可以作为外键参照的目标。
